@@ -82,11 +82,10 @@ view: users {
     type: string
     sql: concat(concat(${first_name},' '),${last_name}) ;;
   }
-  dimension:length{
+  dimension: length {
     type: string
-    sql: lenght(${full_name})
+    sql: length(${full_name});;
   }
-
   dimension: gender {
     type: string
     sql: ${TABLE}.gender ;;
