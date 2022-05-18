@@ -38,11 +38,14 @@ view: order_items {
       raw,
       time,
       date,
+      hour,
       week,
       month,
       quarter,
       year
     ]
+    convert_tz: no
+    datatype: date
     sql: ${TABLE}.returned_at ;;
   }
 
@@ -75,5 +78,25 @@ view: order_items {
   measure: count {
     type: count
     drill_fields: [id, orders.id, inventory_items.id]
+  }
+  parameter: timeframe_picker {
+    label: "Date Granularity"
+    type: string
+    allowed_value: { value: "Hour" }
+    allowed_value: { value: "Date" }
+    allowed_value: { value: "Week" }
+    allowed_value: { value: "Month" }
+  }
+
+  dimension: dynamic_timeframe {
+    type: date_time
+    sql:
+    CASE
+    WHEN {% parameter timeframe_picker %} = 'Hour' THEN to_timestamp(${returned_hour})
+    WHEN {% parameter timeframe_picker %} = 'Date' THEN to_timestamp(${returned_date})
+WHEN {% parameter timeframe_picker %} = 'Week' THEN to_timestamp(${returned_week})
+WHEN {% parameter timeframe_picker %} = 'Month' THEN to_timestamp(${returned_month})
+
+    END ;;
   }
 }
